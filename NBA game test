@@ -1,0 +1,14 @@
+import requests
+
+url = "https://api-basketball.p.rapidapi.com/games"
+
+querystring = {"date":"2019-07-13","league":"12","season":"2019"}
+
+headers = {
+	"X-RapidAPI-Key": "60ae690f03msh00322281f0bf93dp11feccjsn9c179c4d7da9",
+	"X-RapidAPI-Host": "api-basketball.p.rapidapi.com"
+}
+
+response = requests.get(url, headers=headers, params=querystring)
+
+print(response.json())

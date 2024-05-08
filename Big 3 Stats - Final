@@ -1,0 +1,207 @@
+import requests
+from datetime import datetime
+
+# NFL API Functions
+def fetch_nfl_games(date):
+    year = datetime.strptime(date, '%Y-%m-%d').year
+    url = "https://api-american-football.p.rapidapi.com/games"
+    querystring = {"date": date, "season": str(year), "league": "1"}
+    headers = {
+        "X-RapidAPI-Key": "60ae690f03msh00322281f0bf93dp11feccjsn9c179c4d7da9",
+        "X-RapidAPI-Host": "api-american-football.p.rapidapi.com"
+    }
+    response = requests.get(url, headers=headers, params=querystring)
+    games = response.json()
+    print_nfl_games(games)
+
+def print_nfl_games(data):
+    if 'response' in data and len(data['response']) > 0:
+        for game_info in data['response']:
+            game = game_info['game']
+            teams = game_info['teams']
+            scores = game_info['scores']
+            print(f"Game ID: {game['id']} - {teams['home']['name']} vs {teams['away']['name']}")
+            print(f"Date: {game['date']['date']} Time: {game['date']['time']} at {game['venue']['name']}")
+            print(f"Score: {teams['home']['name']} {scores['home']['total']} - {teams['away']['name']} {scores['away']['total']}")
+            print(f"Status: {game['status']['long']}\n")
+            print("-" * 40)
+    else:
+        print("No game data available.")
+
+def fetch_nfl_standings(year):
+    url = "https://api-american-football.p.rapidapi.com/standings"
+    querystring = {"league": "1", "season": year}
+    headers = {
+        "X-RapidAPI-Key": "60ae690f03msh00322281f0bf93dp11feccjsn9c179c4d7da9",
+        "X-RapidAPI-Host": "api-american-football.p.rapidapi.com"
+    }
+    response = requests.get(url, headers=headers, params=querystring)
+    standings = response.json()
+    print_nfl_standings(standings)
+
+def print_nfl_standings(data):
+    if 'response' in data and len(data['response']) > 0:
+        print("NFL Standings:\n")
+        for team in data['response']:
+            print(f"{team['team']['name']} - Conference: {team['conference']}, Division: {team['division']}")
+            print(f"Position: {team['position']}, Wins: {team['won']}, Losses: {team['lost']}, Ties: {team['ties']}")
+            print(f"Points For: {team['points']['for']}, Points Against: {team['points']['against']}, Point Difference: {team['points']['difference']}")
+            print(f"Home Record: {team['records']['home']}, Road Record: {team['records']['road']}")
+            print(f"Conference Record: {team['records']['conference']}, Division Record: {team['records']['division']}")
+            print(f"Current Streak: {team['streak']}\n")
+            print("-" * 80)
+    else:
+        print("No standings available for the given season.")
+
+# NBA API Functions
+def fetch_nba_games(date):
+    url = "https://api-nba-v1.p.rapidapi.com/games"
+    querystring = {"date": date}
+    headers = {
+        "X-RapidAPI-Key": "60ae690f03msh00322281f0bf93dp11feccjsn9c179c4d7da9",
+        "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com"
+    }
+    response = requests.get(url, headers=headers, params=querystring)
+    games = response.json()
+    print_nba_games(games)
+
+def print_nba_games(data):
+    if data['results'] == 0:
+        print("No games found for the given date.")
+        return
+    print("NBA Game Results:")
+    print("-" * 100)
+    for game in data['response']:
+        print(f"Date: {game['date']['start'][:10]}")
+        print(f"Arena: {game['arena']['name']}, {game['arena']['city']}, {game['arena']['state']}")
+        print(f"Visiting Team: {game['teams']['visitors']['name']} - Points: {game['scores']['visitors']['points']}")
+        print(f"Home Team: {game['teams']['home']['name']} - Points: {game['scores']['home']['points']}")
+        print("Score by Quarter (Visitors - Home):")
+        for v_score, h_score in zip(game['scores']['visitors']['linescore'], game['scores']['home']['linescore']):
+            print(f"{v_score} - {h_score}")
+        print("-" * 100)
+
+def fetch_nba_standings(season):
+    url = "https://api-nba-v1.p.rapidapi.com/standings"
+    querystring = {"league": "standard", "season": season}
+    headers = {
+        "X-RapidAPI-Key": "60ae690f03msh00322281f0bf93dp11feccjsn9c179c4d7da9",
+        "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com"
+    }
+    response = requests.get(url, headers=headers, params=querystring)
+    standings = response.json()
+    print_nba_standings(standings)
+
+def print_nba_standings(data):
+    if data['results'] == 0:
+        print("No standings found for the given season.")
+        return
+    print("NBA Standings:")
+    print("-" * 80)
+    for team in data['response']:
+        print(f"Team: {team['team']['name']} ({team['team']['code']})")
+        print(f"Conference: {team['conference']['name']}, Rank: {team['conference']['rank']}")
+        print(f"Division: {team['division']['name']}, Rank: {team['division']['rank']}, Games Behind: {team['gamesBehind']}")
+        print(f"Wins: Home: {team['win']['home']}, Away: {team['win']['away']}, Total: {team['win']['total']}")
+        print(f"Losses: Home: {team['loss']['home']}, Away: {team['loss']['away']}, Total: {team['loss']['total']}")
+        print(f"Winning Streak: {'Yes' if team['winStreak'] else 'No'}, Current Streak: {team['streak']} games")
+        print("-" * 80)
+
+# MLB API Functions
+def fetch_mlb_games(date):
+    year = datetime.strptime(date, '%Y-%m-%d').year  # Extract the year from the date
+    url = "https://api-baseball.p.rapidapi.com/games"
+    querystring = {"date": date, "season": str(year), "league": "1"}  # Use the extracted year for season
+    headers = {
+        "X-RapidAPI-Key": "60ae690f03msh00322281f0bf93dp11feccjsn9c179c4d7da9",
+        "X-RapidAPI-Host": "api-baseball.p.rapidapi.com"
+    }
+    response = requests.get(url, headers=headers, params=querystring)
+    games = response.json()
+    print_mlb_games(games)
+
+def print_mlb_games(game_data):
+    games = game_data.get('response', [])
+    for game in games:
+        date_time = game['date']
+        home_team = game['teams']['home']['name']
+        away_team = game['teams']['away']['name']
+        home_score = game['scores']['home']['total']
+        away_score = game['scores']['away']['total']
+        status = game['status']['long']
+        print(f"Date & Time: {date_time}")
+        print(f"Match: {home_team} vs {away_team}")
+        print(f"Score: {home_team} {home_score} - {away_team} {away_score}")
+        print(f"Status: {status}")
+        print("-" * 40)  # Separator for readability
+
+def fetch_mlb_standings(season):
+    url = "https://api-baseball.p.rapidapi.com/standings"
+    querystring = {"season": season, "league": "1"}  # Assuming '1' stands for MLB
+    headers = {
+        "X-RapidAPI-Key": "60ae690f03msh00322281f0bf93dp11feccjsn9c179c4d7da9",
+        "X-RapidAPI-Host": "api-baseball.p.rapidapi.com"
+    }
+    response = requests.get(url, headers=headers, params=querystring)
+    standings = response.json()
+    print_mlb_standings(standings)
+
+def print_mlb_standings(data):
+    if data['results'] == 0:
+        print("No standings found for the given season.")
+        return
+    print("MLB Standings:")
+    for team_info in data['response'][0]:
+        print(f"Position: {team_info['position']}, Team: {team_info['team']['name']}")
+        print(f"Games Played: {team_info['games']['played']}, Wins: {team_info['games']['win']['total']}, Losses: {team_info['games']['lose']['total']}")
+        print(f"Win Percentage: {team_info['games']['win']['percentage']}, Points For: {team_info['points']['for']}, Points Against: {team_info['points']['against']}")
+        print(f"Form: {team_info['form']}")
+        print("-" * 80)
+
+def main():
+    # Prompt user to pick a sport
+    print("\nSelect a sport:")
+    print("1 - MLB")
+    print("2 - NFL")
+    print("3 - NBA")
+    sport_choice = input("\nEnter your choice (1/2/3): ")
+
+    # Validate the sport choice
+    if sport_choice not in ['1', '2', '3']:
+        print("Invalid choice. Please run the program again.")
+        return
+
+    # Prompt for choosing between games or standings
+    print("\nChoose an option:")
+    print("1 - Games")
+    print("2 - Standings")
+    option_choice = input("\nEnter your choice (1/2): ")
+
+    # Validate the option choice
+    if option_choice not in ['1', '2']:
+        print("Invalid choice. Please run the program again.")
+        return
+
+    # Handle input based on the choice of games or standings
+    if option_choice == '1':
+        # User chose games, ask for a date
+        date_input = input("Enter a date (YYYY-MM-DD): ")
+        if sport_choice == '1':
+            fetch_mlb_games(date_input)
+        elif sport_choice == '2':
+            fetch_nfl_games(date_input)
+        elif sport_choice == '3':
+            fetch_nba_games(date_input)
+
+    elif option_choice == '2':
+        # User chose standings, ask for a year
+        year_input = input("Enter a year (YYYY): ")
+        if sport_choice == '1':
+            fetch_mlb_standings(year_input)
+        elif sport_choice == '2':
+            fetch_nfl_standings(year_input)
+        elif sport_choice == '3':
+            fetch_nba_standings(year_input)
+
+if __name__ == "__main__":
+    main()

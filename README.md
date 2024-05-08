@@ -1,2 +1,2 @@
-# Big4Stats
-Stats scrapper for NBA-NFL-MLB-NHL
+# Big3Stats
+Stats scrapper for NBA-NFL-MLB

@@ -73,3 +73,65 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+import requests
+
+# Function to format and print MLB standings
+def print_mlb_standings(data):
+    print("MLB Standings:")
+    for team_info in data['response'][0]:
+        print(f"Position: {team_info['position']}, Team: {team_info['team']['name']}")
+        print(f"Games Played: {team_info['games']['played']}, Wins: {team_info['games']['win']['total']}, Losses: {team_info['games']['lose']['total']}")
+        print(f"Win Percentage: {team_info['games']['win']['percentage']}, Points For: {team_info['points']['for']}, Points Against: {team_info['points']['against']}")
+        print(f"Form: {team_info['form']}")
+        print("-" * 80)
+
+# Function to format and print NFL standings
+def print_nfl_standings(data):
+    print("NFL Standings:\n")
+    for team in data['response']:
+        print(f"{team['team']['name']} - Conference: {team['conference']}, Division: {team['division']}")
+        print(f"Position: {team['position']}, Wins: {team['won']}, Losses: {team['lost']}, Ties: {team['ties']}")
+        print(f"Points For: {team['points']['for']}, Points Against: {team['points']['against']}, Point Difference: {team['points']['difference']}")
+        print(f"Home Record: {team['records']['home']}, Road Record: {team['records']['road']}")
+        print(f"Conference Record: {team['records']['conference']}, Division Record: {team['records']['division']}")
+        print(f"Current Streak: {team['streak']}\n")
+        print("-" * 80)
+
+# Function to format and print NBA standings
+def print_nba_standings(data):
+    print("NBA Standings:")
+    print("-" * 80)
+    for team in data['response']:
+        print(f"Team: {team['team']['name']} ({team['team']['code']})")
+        print(f"Conference: {team['conference']['name']}, Rank: {team['conference']['rank']}")
+        print(f"Division: {team['division']['name']}, Rank: {team['division']['rank']}, Games Behind: {team['gamesBehind']}")
+        print(f"Wins: Home: {team['win']['home']}, Away: {team['win']['away']}, Total: {team['win']['total']}")
+        print(f"Losses: Home: {team['loss']['home']}, Away: {team['loss']['away']}, Total: {team['loss']['total']}")
+        print(f"Winning Streak: {'Yes' if team['winStreak'] else 'No'}, Current Streak: {team['streak']} games")
+        print("-" * 80)
+
+# Function to print formatted game results (NBA example)
+def print_game_results(data):
+    print("NBA Game Results:")
+    print("-" * 100)
+    for game in data['response']:
+        print(f"Date: {game['date']['start'][:10]}")
+        print(f"Arena: {game['arena']['name']}, {game['arena']['city']}, {game['arena']['state']}")
+        print(f"Visiting Team: {game['teams']['visitors']['name']} - Points: {game['scores']['visitors']['points']}")
+        print(f"Home Team: {game['teams']['home']['name']} - Points: {game['scores']['home']['points']}")
+        print("Score by Quarter (Visitors - Home):")
+        for v_score, h_score in zip(game['scores']['visitors']['linescore'], game['scores']['home']['linescore']):
+            print(f"{v_score} - {h_score}")
+        print("-" * 100)
+
+# Placeholder for API call simulation
+# Example: Replace with your actual `requests.get()` calls
+mlb_data = {'response': [[]]}  # Simulated data
+nfl_data = {'response': []}
+nba_data = {'response': []}
+
+# Calling functions to print the data
+print_mlb_standings(mlb_data)
+print_nfl_standings(nfl_data)
+print_nba_standings(nba_data)

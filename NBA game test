@@ -1,14 +1,44 @@
 import requests
 
-url = "https://api-basketball.p.rapidapi.com/games"
 
-querystring = {"date":"2019-07-13","league":"12","season":"2019"}
+# Function to get NBA game results for a specific date
+def get_nba_games_on_date(date):
+    url = "https://api-nba-v1.p.rapidapi.com/games"
+    querystring = {"date": date}
+    headers = {
+        "X-RapidAPI-Key": "60ae690f03msh00322281f0bf93dp11feccjsn9c179c4d7da9",
+        "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com"
+    }
+    response = requests.get(url, headers=headers, params=querystring)
+    return response.json()
 
-headers = {
-	"X-RapidAPI-Key": "60ae690f03msh00322281f0bf93dp11feccjsn9c179c4d7da9",
-	"X-RapidAPI-Host": "api-basketball.p.rapidapi.com"
-}
 
-response = requests.get(url, headers=headers, params=querystring)
+# Function to print formatted game results
+def print_game_results(data):
+    if data['results'] == 0:
+        print("No games found for the given date.")
+        return
 
-print(response.json())
+    print("NBA Game Results:")
+    print("-" * 100)
+    for game in data['response']:
+        print(f"Date: {game['date']['start'][:10]}")
+        print(f"Arena: {game['arena']['name']}, {game['arena']['city']}, {game['arena']['state']}")
+        print(f"Visiting Team: {game['teams']['visitors']['name']} - Points: {game['scores']['visitors']['points']}")
+        print(f"Home Team: {game['teams']['home']['name']} - Points: {game['scores']['home']['points']}")
+        print("Score by Quarter (Visitors - Home):")
+        for v_score, h_score in zip(game['scores']['visitors']['linescore'], game['scores']['home']['linescore']):
+            print(f"{v_score} - {h_score}")
+        print("-" * 100)
+
+
+# Main function to control the program flow
+def main():
+    date = input("Enter the date for NBA games (YYYY-MM-DD): ")
+    game_data = get_nba_games_on_date(date)
+    print_game_results(game_data)
+
+
+# Execute the main function
+if __name__ == "__main__":
+    main()
